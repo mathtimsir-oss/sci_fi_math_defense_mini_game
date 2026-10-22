@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sci-Fi Math Defense: Removing Brackets</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background-color: #0b0f19;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+        .font-orbitron {
+            font-family: 'Orbitron', sans-serif;
+        }
+        /* Custom Neon Glows */
+        .glow-cyan {
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.5), inset 0 0 10px rgba(6, 182, 212, 0.3);
+        }
+        .glow-red {
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.6), inset 0 0 10px rgba(239, 68, 68, 0.3);
+        }
+        .glow-green {
+            box-shadow: 0 0 15px rgba(34, 197, 94, 0.6);
+        }
+        .text-glow-cyan {
+            text-shadow: 0 0 8px rgba(6, 182, 212, 0.8);
+        }
+        .text-glow-amber {
+            text-shadow: 0 0 8px rgba(245, 158, 11, 0.8);
+        }
+        /* Glassmorphism Panel */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #0284c7;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between select-none">
+
+    <!-- Top Navigation Bar (Page 1 - 4 Navigation) -->
+    <header class="w-full bg-slate-900/90 border-b border-cyan-500/30 sticky top-0 z-50 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="w-9 h-9 rounded-lg bg-gradient-to-tr from-cyan-600 to-blue-500 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-cyan-500/30">
+                    <i class="fa-solid font-orbitron">∑</i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-black font-orbitron tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-teal-300 to-indigo-400">
+                        NEXUS MATH DEFENSE
+                    </h1>
+                    <p class="text-xs text-cyan-400/70 font-mono tracking-widest uppercase">Module: Algebraic Transformations</p>
+                </div>
+            </div>
+
+            <!-- Page Navigation -->
+            <nav class="flex items-center space-x-1 sm:space-x-2 bg-slate-950/60 p-1.5 rounded-xl border border-slate-800">
+                <button onclick="switchPage(1)" class="px-3 py-1.5 rounded-lg text-xs font-semibold font-orbitron text-slate-400 hover:text-cyan-300 hover:bg-slate-800 transition flex items-center gap-1.5">
+                    <span class="w-5 h-5 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-[10px]">1</span>
+                    <span class="hidden md:inline">Concept & Demos</span>
+                </button>
+                <button onclick="switchPage(2)" class="px-3 py-1.5 rounded-lg text-xs font-semibold font-orbitron bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm flex items-center gap-1.5">
+                    <span class="w-5 h-5 rounded-full bg-cyan-500 text-slate-950 flex items-center justify-center text-[10px] font-bold">2</span>
+                    <span>Removing Brackets</span>
+                </button>
+                <button onclick="switchPage(3)" class="px-3 py-1.5 rounded-lg text-xs font-semibold font-orbitron text-slate-400 hover:text-cyan-300 hover:bg-slate-800 transition flex items-center gap-1.5">
+                    <span class="w-5 h-5 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-[10px]">3</span>
+                    <span class="hidden md:inline">Combining Terms</span>
+                </button>
+                <button onclick="switchPage(4)" class="px-3 py-1.5 rounded-lg text-xs font-semibold font-orbitron text-slate-400 hover:text-cyan-300 hover:bg-slate-800 transition flex items-center gap-1.5">
+                    <span class="w-5 h-5 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-[10px]">4</span>
+                    <span class="hidden md:inline">Eliminating Denominators</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Game Container -->
+    <main class="max-w-7xl w-full mx-auto p-3 sm:p-5 flex-1 flex flex-col gap-4">
+
+        <!-- Top Control & Status Bar -->
+        <div class="glass-panel p-4 rounded-2xl flex flex-wrap justify-between items-center gap-4">
+            
+            <!-- Difficulty Selector -->
+            <div class="flex items-center gap-2">
+                <span class="text-xs font-orbitron text-slate-400 uppercase tracking-widest"><i class="fa-solid fa-gauge-high mr-1 text-cyan-400"></i> Difficulty:</span>
+                <div class="flex bg-slate-900 rounded-lg p-1 border border-slate-800 text-xs font-bold font-orbitron">
+                    <button id="btn-easy" onclick="setDifficulty('easy')" class="px-2.5 py-1 rounded-md transition text-slate-400 hover:text-white">EASY</button>
+                    <button id="btn-medium" onclick="setDifficulty('medium')" class="px-2.5 py-1 rounded-md transition text-cyan-400 bg-cyan-950/80 border border-cyan-500/50">MEDIUM</button>
+                    <button id="btn-hard" onclick="setDifficulty('hard')" class="px-2.5 py-1 rounded-md transition text-slate-400 hover:text-white">HARD</button>
+                    <button id="btn-insane" onclick="setDifficulty('insane')" class="px-2.5 py-1 rounded-md transition text-slate-400 hover:text-white text-red-400">INSANE</button>
+                </div>
+            </div>
+
+            <!-- Score, Timer & Wave Stats -->
+            <div class="flex items-center gap-6 text-sm font-orbitron">
+                <div class="text-center">
+                    <div class="text-[10px] text-slate-400 uppercase tracking-widest">Defense Score</div>
+                    <div id="score-display" class="text-xl font-black text-cyan-400">0000</div>
+                </div>
+                <div class="h-8 w-px bg-slate-800"></div>
+                <div class="text-center">
+                    <div class="text-[10px] text-slate-400 uppercase tracking-widest">Time Remaining</div>
+                    <div id="timer-display" class="text-xl font-black text-amber-400">90s</div>
+                </div>
+                <div class="h-8 w-px bg-slate-800"></div>
+                <div class="text-center">
+                    <div class="text-[10px] text-slate-400 uppercase tracking-widest">Questions Target</div>
+                    <div id="target-display" class="text-xl font-black text-emerald-400">0 / 6</div>
+                </div>
+                <div class="h-8 w-px bg-slate-800 hidden sm:block"></div>
+                <button id="sound-btn" onclick="toggleSound()" class="p-2 rounded-lg bg-slate-800 border border-slate-700 text-cyan-400 hover:bg-slate-700 transition">
+                    <i class="fa-solid fa-volume-high text-base"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Battlefield & Defense Interface Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 flex-1">
+            
+            <!-- Left Canvas - Planet Defense Battlefield -->
+            <div class="lg:col-span-7 flex flex-col gap-2 relative">
+                
+                <!-- Game Canvas Container -->
+                <div id="canvas-container" class="relative w-full rounded-2xl overflow-hidden border border-cyan-500/30 bg-slate-950 shadow-2xl flex-1 min-h-[380px] lg:min-h-[460px]">
+                    
+                    <!-- Alien Boss / Wave Shield Bar Overlay (TOP OF CANVAS) -->
+                    <div class="absolute top-3 left-4 right-4 z-20 bg-slate-950/80 backdrop-blur-md border border-cyan-500/40 rounded-xl p-2.5 shadow-lg">
+                        <div class="flex justify-between items-center text-xs font-orbitron mb-1.5 px-1">
+                            <span id="boss-name" class="text-red-400 font-bold tracking-wider flex items-center gap-1.5">
+                                <i class="fa-solid fa-skull-crossbones animate-pulse"></i> ALIEN MOTHERSHIP SHIELD
+                            </span>
+                            <span id="boss-hp-text" class="text-cyan-300 font-extrabold tracking-widest">100.0% INTEGRITY</span>
+                        </div>
+                        <!-- Outer Shield Bar -->
+                        <div class="w-full bg-slate-900/90 rounded-lg h-4 p-0.5 border border-slate-800 relative overflow-hidden">
+                            <!-- Energy Fill -->
+                            <div id="boss-hp-bar" class="h-full rounded-md bg-gradient-to-r from-cyan-500 via-teal-400 to-emerald-400 transition-all duration-500 shadow-lg glow-cyan" style="width: 100%;"></div>
+                            <!-- Segment Divider overlay lines -->
+                            <div id="shield-segments" class="absolute inset-0 flex justify-between pointer-events-none px-1"></div>
+                        </div>
+                    </div>
+
+                    <!-- Canvas -->
+                    <canvas id="gameCanvas" class="w-full h-full block"></canvas>
+
+                    <!-- Start / Game Over Overlay -->
+                    <div id="game-overlay" class="absolute inset-0 bg-slate-950/90 backdrop-blur-md flex flex-col items-center justify-center z-30 p-6 text-center">
+                        <div class="w-16 h-16 rounded-full bg-cyan-500/20 border border-cyan-400 flex items-center justify-center text-cyan-400 text-3xl mb-4 animate-bounce">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <h2 id="overlay-title" class="text-3xl font-black font-orbitron text-cyan-300 tracking-wider mb-2">
+                            DEFEND THE NEXUS BASE
+                        </h2>
+                        <p id="overlay-desc" class="text-sm text-slate-300 max-w-md mb-6 leading-relaxed">
+                            Expand brackets accurately to power up the Orbital Plasma Cannon. Neutralize advancing invader waves and destroy the Alien Mothership shield!
+                        </p>
+                        <button onclick="startGame()" class="px-8 py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-black font-orbitron tracking-widest text-base shadow-lg glow-cyan transform hover:-translate-y-0.5 transition active:translate-y-0">
+                            INITIALIZE DEFENSE <i class="fa-solid fa-crosshairs ml-2"></i>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Right Interactive Math Control Console -->
+            <div class="lg:col-span-5 flex flex-col gap-4">
+                
+                <div class="glass-panel p-5 rounded-2xl flex-1 flex flex-col justify-between relative border-cyan-500/40">
+                    
+                    <!-- Question Header & Mode Switcher -->
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-xs font-orbitron text-cyan-400 tracking-widest uppercase flex items-center gap-1.5">
+                                <i class="fa-solid fa-terminal"></i> TARGET ALGEBRA MATRIX
+                            </span>
+                            <!-- Mode Selector (Multiple Choice vs Fill In Blank) -->
+                            <div class="flex bg-slate-900 rounded-md p-1 border border-slate-800 text-[10px] font-orbitron">
+                                <button id="mode-mc" onclick="setAnswerMode('mc')" class="px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-600">MULTIPLE CHOICE</button>
+                                <button id="mode-input" onclick="setAnswerMode('input')" class="px-2 py-0.5 rounded text-slate-400 hover:text-white">MANUAL INPUT</button>
+                            </div>
+                        </div>
+
+                        <!-- Target Equation Display -->
+                        <div class="bg-slate-950/80 rounded-xl p-4 border border-slate-800 text-center mb-4 relative overflow-hidden">
+                            <div class="text-xs text-slate-400 font-mono mb-1">EXPAND & SIMPLIFY THE BRACKETS:</div>
+                            <div id="equation-display" class="text-2xl sm:text-3xl font-black font-orbitron text-amber-300 tracking-wide my-1">
+                                3(x + 4)
+                            </div>
+                            <div class="text-[11px] text-cyan-400/80 font-mono mt-1">
+                                Distribute factor: <span id="distribute-hint-text" class="text-white font-bold">a(b + c) = ab + ac</span>
+                            </div>
+                        </div>
+
+                        <!-- Interactive Distributive Arc Visualizer Box -->
+                        <div class="bg-slate-900/60 rounded-xl p-3 border border-slate-800/80 mb-4">
+                            <div class="text-[11px] font-orbitron text-cyan-400 mb-2 flex justify-between items-center">
+                                <span><i class="fa-solid fa-bezier-curve mr-1"></i> STEP-BY-STEP BRACKET ARC EXPANSION</span>
+                                <button onclick="toggleArcVisualizer()" class="text-[10px] underline text-slate-400 hover:text-cyan-300">Toggle Arc</button>
+                            </div>
+                            <!-- Canvas Arc Hint -->
+                            <div class="w-full h-16 bg-slate-950 rounded-lg relative flex items-center justify-center border border-slate-800/60 overflow-hidden">
+                                <canvas id="arcCanvas" class="w-full h-full block"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Guided Step Input / Steps Display -->
+                        <div id="step-hint-container" class="bg-slate-900/40 rounded-xl p-3 border border-slate-800 text-xs font-mono text-slate-300 mb-4 hidden">
+                            <span class="text-cyan-400 font-bold font-orbitron">Step 1:</span> Multiply outer factor:
+                            <div id="step-expansion-text" class="text-amber-200 mt-1 font-semibold text-sm">3 × x + 3 × 4</div>
+                        </div>
+                    </div>
+
+                    <!-- Answer Section (Dynamic MC or Input) -->
+                    <div>
+                        <!-- Multiple Choice Options -->
+                        <div id="mc-container" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-2">
+                            <!-- Options generated dynamically -->
+                        </div>
+
+                        <!-- Manual Text Input Container (Hidden by default) -->
+                        <div id="input-container" class="hidden flex-col gap-2 mb-2">
+                            <label class="text-xs text-slate-400 font-mono">TYPE EXPANDED EXPRESSION (e.g. 3x + 12):</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="manual-answer-input" placeholder="e.g. 3x + 12" class="flex-1 bg-slate-950 border border-slate-700 focus:border-cyan-400 rounded-xl px-4 py-3 text-lg font-orbitron text-cyan-300 focus:outline-none transition">
+                                <button onclick="submitManualAnswer()" class="px-5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold font-orbitron rounded-xl transition">
+                                    FIRE
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Feedback Box -->
+                        <div id="feedback-box" class="h-10 rounded-xl flex items-center justify-center text-xs font-bold font-orbitron transition-all bg-slate-900/60 border border-slate-800 text-slate-400">
+                            AWAITING TARGETING INPUT...
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Instructional Cheat-Sheet & Bracket Rules (Footer Drawer) -->
+        <div class="glass-panel p-4 rounded-2xl border-slate-800/80 text-xs text-slate-300">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-2 mb-3">
+                <span class="font-orbitron text-cyan-400 font-bold uppercase tracking-wider flex items-center gap-1.5">
+                    <i class="fa-solid fa-book-bookmark"></i> BRACKET EXPANSION RULES & TACTICS
+                </span>
+                <span class="text-slate-400 font-mono text-[11px]">Formula: a(b + c) = ab + ac</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 font-mono">
+                <div class="bg-slate-950/50 p-2.5 rounded-lg border border-slate-800">
+                    <div class="text-cyan-300 font-bold font-orbitron text-[11px] mb-1">1. POSITIVE MULTIPLIER</div>
+                    <div>4(2x + 3) = (4×2x) + (4×3)</div>
+                    <div class="text-emerald-400 font-bold">= 8x + 12</div>
+                </div>
+                <div class="bg-slate-950/50 p-2.5 rounded-lg border border-slate-800">
+                    <div class="text-amber-300 font-bold font-orbitron text-[11px] mb-1">2. NEGATIVE MULTIPLIER (WATCH SIGNS!)</div>
+                    <div>-3(x - 5) = (-3×x) + (-3×-5)</div>
+                    <div class="text-amber-400 font-bold">= -3x + 15</div>
+                </div>
+                <div class="bg-slate-950/50 p-2.5 rounded-lg border border-slate-800">
+                    <div class="text-indigo-300 font-bold font-orbitron text-[11px] mb-1">3. DOUBLE BRACKET EXPANSION</div>
+                    <div>2(x + 3) + 4(x - 1) = 2x + 6 + 4x - 4</div>
+                    <div class="text-indigo-400 font-bold">= 6x + 2</div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Global Footer -->
+    <footer class="w-full bg-slate-950 border-t border-slate-900 py-3 text-center text-xs text-slate-500 font-mono">
+        NEXUS MATH DEFENSE V2.5 &bull; PAGE 2 OF 4: REMOVING BRACKETS PRACTICE
+    </footer>
+
+    <!-- Audio & Game Engine Logic Script -->
+    <script>
+        /* ------------------------------------------------------------------
+           1. AUDIO SYNTHESIZER (Web Audio API)
+           ------------------------------------------------------------------ */
+        class SoundFX {
+            constructor() {
+                this.ctx = null;
+                this.enabled = true;
+            }
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            }
+            playLaser() {
+                if (!this.enabled) return;
+                this.init();
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(800, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(100, this.ctx.currentTime + 0.25);
+                gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.25);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.25);
+            }
+            playHit() {
+                if (!this.enabled) return;
+                this.init();
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(150, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(30, this.ctx.currentTime + 0.3);
+                gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.3);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.3);
+            }
+            playShieldDeduct() {
+                if (!this.enabled) return;
+                this.init();
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(300, this.ctx.currentTime);
+                osc.frequency.linearRampToValueAtTime(600, this.ctx.currentTime + 0.15);
+                osc.frequency.linearRampToValueAtTime(200, this.ctx.currentTime + 0.35);
+                gain.gain.setValueAtTime(0.25, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.35);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.35);
+            }
+            playError() {
+                if (!this.enabled) return;
+                this.init();
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(120, this.ctx.currentTime);
+                osc.frequency.setValueAtTime(90, this.ctx.currentTime + 0.15);
+                gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.3);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.3);
+            }
+            playVictory() {
+                if (!this.enabled) return;
+                this.init();
+                const notes = [261.63, 329.63, 392.00, 523.25];
+                notes.forEach((freq, idx) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.value = freq;
+                    gain.gain.setValueAtTime(0.15, this.ctx.currentTime + idx * 0.12);
+                    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + idx * 0.12 + 0.4);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(this.ctx.currentTime + idx * 0.12);
+                    osc.stop(this.ctx.currentTime + idx * 0.12 + 0.4);
+                });
+            }
+        }
+        const sound = new SoundFX();
+
+        function toggleSound() {
+            sound.enabled = !sound.enabled;
+            const btn = document.getElementById('sound-btn');
+            btn.innerHTML = sound.enabled ? '<i class="fa-solid fa-volume-high text-base"></i>' : '<i class="fa-solid fa-volume-xmark text-base text-red-400"></i>';
+        }
+
+        /* ------------------------------------------------------------------
+           2. GAME CONFIGURATION & STATE
+           ------------------------------------------------------------------ */
+        const DIFFICULTIES = {
+            easy: { targetQuestions: 6, timeLimit: 120, invaderSpeed: 0.25, scoreMultiplier: 100 },
+            medium: { targetQuestions: 6, timeLimit: 90, invaderSpeed: 0.35, scoreMultiplier: 150 },
+            hard: { targetQuestions: 8, timeLimit: 60, invaderSpeed: 0.50, scoreMultiplier: 200 },
+            insane: { targetQuestions: 10, timeLimit: 45, invaderSpeed: 0.70, scoreMultiplier: 300 }
+        };
+
+        let currentDifficulty = 'medium';
+        let answerMode = 'mc'; // 'mc' or 'input'
+        let gameState = {
+            active: false,
+            score: 0,
+            timer: 90,
+            timerInterval: null,
+            questionsAnswered: 0,
+            targetQuestions: 6,
+            bossEnergy: 100, // 100%
+            bossSegmentVal: 100 / 6, // Deducted per correct question
+            currentProblem: null
+        };
+
+        /* ------------------------------------------------------------------
+           3. CANVAS ENGINE & ANIMATION (MECH, INVADERS, LASERS, PARTICLES)
+           ------------------------------------------------------------------ */
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        let animationFrameId = null;
+
+        // Visual Objects
+        let cannon = { x: 0, y: 0, angle: -Math.PI / 2 };
+        let bossMothership = { x: 0, y: 80, radius: 45, pulse: 0 };
+        let invaders = [];
+        let lasers = [];
+        let particles = [];
+        let floatingTexts = [];
+
+        function resizeCanvas() {
+            const container = document.getElementById('canvas-container');
+            if (!container) return;
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+            cannon.x = canvas.width / 2;
+            cannon.y = canvas.height - 40;
+            bossMothership.x = canvas.width / 2;
+        }
+        window.addEventListener('resize', resizeCanvas);
+
+        function spawnInvader() {
+            if (!gameState.active) return;
+            const config = DIFFICULTIES[currentDifficulty];
+            const margin = 60;
+            const x = margin + Math.random() * (canvas.width - margin * 2);
+            invaders.push({
+                x: x,
+                y: 110,
+                speed: config.invaderSpeed + Math.random() * 0.15,
+                radius: 16,
+                type: Math.random() > 0.5 ? 1 : 2
+            });
+        }
+
+        function createExplosion(x, y, color = '#38bdf8', count = 18) {
+            for (let i = 0; i < count; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const speed = 1 + Math.random() * 4;
+                particles.push({
+                    x: x,
+                    y: y,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    radius: 2 + Math.random() * 3,
+                    color: color,
+                    life: 1,
+                    decay: 0.02 + Math.random() * 0.03
+                });
+            }
+        }
+
+        function addFloatingText(text, x, y, color = '#38bdf8') {
+            floatingTexts.push({
+                text: text,
+                x: x,
+                y: y,
+                vy: -1.2,
+                alpha: 1.0,
+                color: color
+            });
+        }
+
+        function triggerLaserBeam(targetX, targetY, isBoss = false) {
+            sound.playLaser();
+            lasers.push({
+                sx: cannon.x,
+                sy: cannon.y - 20,
+                tx: targetX,
+                ty: targetY,
+                progress: 0,
+                isBoss: isBoss
+            });
+        }
+
+        function drawBackground() {
+            // Starfield background
+            ctx.fillStyle = '#070a12';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Grid lines
+            ctx.strokeStyle = 'rgba(14, 165, 233, 0.07)';
+            ctx.lineWidth = 1;
+            const gridSize = 40;
+            for (let x = 0; x < canvas.width; x += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+            for (let y = 0; y < canvas.height; y += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+        }
+
+        function drawBossMothership() {
+            bossMothership.pulse += 0.05;
+            const glow = Math.sin(bossMothership.pulse) * 5;
+            const x = bossMothership.x;
+            const y = bossMothership.y;
+
+            // Boss Outer Energy Aura
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(x, y, bossMothership.radius + 10 + glow, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(239, 68, 68, 0.15)';
+            ctx.fill();
+
+            // Boss Structure
+            ctx.beginPath();
+            ctx.ellipse(x, y, 70, 25, 0, 0, Math.PI * 2);
+            ctx.fillStyle = '#1e293b';
+            ctx.strokeStyle = '#ef4444';
+            ctx.lineWidth = 3;
+            ctx.fill();
+            ctx.stroke();
+
+            // Glowing Core
+            ctx.beginPath();
+            ctx.arc(x, y, 14, 0, Math.PI * 2);
+            ctx.fillStyle = gameState.bossEnergy > 0 ? '#ef4444' : '#22c55e';
+            ctx.shadowColor = '#ef4444';
+            ctx.shadowBlur = 15;
+            ctx.fill();
+            ctx.restore();
+        }
+
+        function drawCannon() {
+            ctx.save();
+            ctx.translate(cannon.x, cannon.y);
+
+            // Base Platform
+            ctx.fillStyle = '#334155';
+            ctx.strokeStyle = '#06b6d4';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(0, 10, 28, Math.PI, 0, false);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // Cannon Barrel
+            ctx.rotate(cannon.angle + Math.PI / 2);
+            ctx.fillStyle = '#0e7490';
+            ctx.fillRect(-6, -32, 12, 30);
+            ctx.fillStyle = '#22d3ee';
+            ctx.fillRect(-8, -36, 16, 6);
+
+            ctx.restore();
+        }
+
+        function updateAndRender() {
+            drawBackground();
+            drawBossMothership();
+            drawCannon();
+
+            // Update & Draw Invaders
+            for (let i = invaders.length - 1; i >= 0; i--) {
+                let inv = invaders[i];
+                inv.y += inv.speed;
+
+                // Draw Invader
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(inv.x, inv.y, inv.radius, 0, Math.PI * 2);
+                ctx.fillStyle = inv.type === 1 ? 'rgba(245, 158, 11, 0.85)' : 'rgba(168, 85, 247, 0.85)';
+                ctx.shadowColor = inv.type === 1 ? '#f59e0b' : '#a855f7';
+                ctx.shadowBlur = 10;
+                ctx.fill();
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+                ctx.restore();
+
+                // Check breach bottom boundary
+                if (inv.y > canvas.height - 60) {
+                    invaders.splice(i, 1);
+                    sound.playError();
+                    addFloatingText("DEFENSE BREACH!", inv.x, inv.y, "#ef4444");
+                    gameState.score = Math.max(0, gameState.score - 50);
+                    updateScoreUI();
+                }
+            }
+
+            // Update & Draw Lasers
+            for (let i = lasers.length - 1; i >= 0; i--) {
+                let l = lasers[i];
+                l.progress += 0.15;
+                let curX = l.sx + (l.tx - l.sx) * l.progress;
+                let curY = l.sy + (l.ty - l.sy) * l.progress;
+
+                ctx.strokeStyle = '#38bdf8';
+                ctx.lineWidth = 4;
+                ctx.shadowColor = '#0284c7';
+                ctx.shadowBlur = 12;
+                ctx.beginPath();
+                ctx.moveTo(l.sx, l.sy);
+                ctx.lineTo(curX, curY);
+                ctx.stroke();
+
+                if (l.progress >= 1) {
+                    lasers.splice(i, 1);
+                    createExplosion(l.tx, l.ty, l.isBoss ? '#ef4444' : '#f59e0b', l.isBoss ? 28 : 16);
+                    sound.playHit();
+                    if (l.isBoss) {
+                        sound.playShieldDeduct();
+                    }
+                }
+            }
+
+            // Update & Draw Particles
+            for (let i = particles.length - 1; i >= 0; i--) {
+                let p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.life -= p.decay;
+
+                if (p.life <= 0) {
+                    particles.splice(i, 1);
+                    continue;
+                }
+
+                ctx.save();
+                ctx.globalAlpha = p.life;
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+
+            // Update & Draw Floating Texts
+            for (let i = floatingTexts.length - 1; i >= 0; i--) {
+                let ft = floatingTexts[i];
+                ft.y += ft.vy;
+                ft.alpha -= 0.02;
+
+                if (ft.alpha <= 0) {
+                    floatingTexts.splice(i, 1);
+                    continue;
+                }
+
+                ctx.save();
+                ctx.globalAlpha = ft.alpha;
+                ctx.font = 'bold 13px Orbitron';
+                ctx.fillStyle = ft.color;
+                ctx.textAlign = 'center';
+                ctx.fillText(ft.text, ft.x, ft.y);
+                ctx.restore();
+            }
+
+            // Periodic spawn invaders
+            if (gameState.active && Math.random() < 0.02 && invaders.length < 5) {
+                spawnInvader();
+            }
+
+            animationFrameId = requestAnimationFrame(updateAndRender);
+        }
+
+        /* ------------------------------------------------------------------
+           4. MATHEMATICS PROBLEM GENERATOR & BRACKET ARC VISUALIZER
+           ------------------------------------------------------------------ */
+        function generateBracketProblem() {
+            // Types:
+            // Easy: Single bracket positive multiplier 3(x + 4) or 2(3y - 2)
+            // Medium: Single bracket negative multiplier -2(x - 5) or 4(2a + 3)
+            // Hard/Insane: Double bracket expansion 3(x + 2) + 2(x - 4) or 4(2y - 1) - 3(y + 2)
+
+            const vars = ['x', 'y', 'a', 'b', 'n'];
+            const v = vars[Math.floor(Math.random() * vars.length)];
+            let problem = { expression: '', answerStr: '', steps: '', distHint: '' };
+
+            if (currentDifficulty === 'easy' || (currentDifficulty === 'medium' && Math.random() < 0.5)) {
+                // Single Bracket: a(bx + c)
+                const a = Math.floor(Math.random() * 5) + 2;
+                const b = Math.floor(Math.random() * 3) + 1;
+                const c = (Math.random() < 0.5 ? 1 : -1) * (Math.floor(Math.random() * 6) + 1);
+
+                const term1 = a * b;
+                const term2 = a * c;
+
+                const cSign = c >= 0 ? `+ ${c}` : `- ${Math.abs(c)}`;
+                const term2Sign = term2 >= 0 ? `+ ${term2}` : `- ${Math.abs(term2)}`;
+
+                const bStr = b === 1 ? '' : b;
+                const term1Str = term1 === 1 ? v : `${term1}${v}`;
+
+                problem.expression = `${a}(${bStr}${v} ${cSign})`;
+                problem.answerStr = `${term1Str} ${term2Sign}`;
+                problem.steps = `Multiply ${a} by each term inside: (${a} × ${bStr}${v}) + (${a} × ${c})`;
+                problem.distHint = `${a} · ${bStr}${v} and ${a} · (${c})`;
+                problem.a = a;
+                problem.bStr = `${bStr}${v}`;
+                problem.cStr = `${cSign}`;
+
+            } else if (currentDifficulty === 'medium' || (currentDifficulty === 'hard' && Math.random() < 0.4)) {
+                // Negative Multiplier Bracket: -a(bx + c)
+                const a = -1 * (Math.floor(Math.random() * 4) + 2);
+                const b = Math.floor(Math.random() * 3) + 1;
+                const c = (Math.random() < 0.5 ? 1 : -1) * (Math.floor(Math.random() * 5) + 1);
+
+                const term1 = a * b;
+                const term2 = a * c;
+
+                const cSign = c >= 0 ? `+ ${c}` : `- ${Math.abs(c)}`;
+                const term2Sign = term2 >= 0 ? `+ ${term2}` : `- ${Math.abs(term2)}`;
+
+                const bStr = b === 1 ? '' : b;
+                const term1Str = `${term1}${v}`;
+
+                problem.expression = `${a}(${bStr}${v} ${cSign})`;
+                problem.answerStr = `${term1Str} ${term2Sign}`;
+                problem.steps = `Watch sign changes! (${a} × ${bStr}${v}) + (${a} × ${c})`;
+                problem.distHint = `${a} · ${bStr}${v} and ${a} · (${c})`;
+                problem.a = a;
+                problem.bStr = `${bStr}${v}`;
+                problem.cStr = `${cSign}`;
+
+            } else {
+                // Double Bracket: a(x + b) + c(x + d)
+                const a = Math.floor(Math.random() * 4) + 2;
+                const b = Math.floor(Math.random() * 4) + 1;
+                const c = (Math.random() < 0.5 ? 1 : -1) * (Math.floor(Math.random() * 3) + 1);
+                const d = Math.floor(Math.random() * 4) + 1;
+
+                const totalX = a + c;
+                const totalConst = (a * b) + (c * d);
+
+                const cSign = c >= 0 ? `+ ${c}` : `- ${Math.abs(c)}`;
+                const totalConstSign = totalConst >= 0 ? `+ ${totalConst}` : `- ${Math.abs(totalConst)}`;
+
+                problem.expression = `${a}(${v} + ${b}) ${cSign}(${v} + ${d})`;
+                problem.answerStr = `${totalX}${v} ${totalConstSign}`;
+                problem.steps = `Expand both: [${a}${v} + ${a*b}] + [${c}${v} + ${c*d}] -> Combine terms`;
+                problem.distHint = `Expand both sets of brackets & combine like terms`;
+                problem.a = a;
+            }
+
+            gameState.currentProblem = problem;
+            renderProblemUI();
+            drawArcHintCanvas();
+        }
+
+        // Render Arc Hint Canvas
+        function drawArcHintCanvas() {
+            const arcCanvas = document.getElementById('arcCanvas');
+            if (!arcCanvas) return;
+            const actx = arcCanvas.getContext('2d');
+            arcCanvas.width = arcCanvas.clientWidth;
+            arcCanvas.height = arcCanvas.clientHeight;
+
+            actx.clearRect(0, 0, arcCanvas.width, arcCanvas.height);
+
+            const p = gameState.currentProblem;
+            if (!p) return;
+
+            actx.font = 'bold 16px Orbitron';
+            actx.fillStyle = '#fde047';
+            actx.textAlign = 'center';
+            actx.textBaseline = 'middle';
+
+            const centerX = arcCanvas.width / 2;
+            const centerY = arcCanvas.height / 2 + 6;
+
+            actx.fillText(p.expression, centerX, centerY);
+
+            // Draw Distributive Arcs
+            actx.strokeStyle = '#06b6d4';
+            actx.lineWidth = 2;
+
+            // Arc 1 (Outer factor to first term)
+            actx.beginPath();
+            actx.arc(centerX - 35, centerY - 8, 20, Math.PI, Math.PI * 1.8);
+            actx.stroke();
+
+            // Arc 2 (Outer factor to second term)
+            actx.beginPath();
+            actx.arc(centerX - 15, centerY - 8, 35, Math.PI, Math.PI * 1.85);
+            actx.stroke();
+        }
+
+        function toggleArcVisualizer() {
+            const el = document.getElementById('step-hint-container');
+            el.classList.toggle('hidden');
+        }
+
+        function renderProblemUI() {
+            const p = gameState.currentProblem;
+            document.getElementById('equation-display').innerText = p.expression;
+            document.getElementById('step-expansion-text').innerText = p.steps;
+            document.getElementById('distribute-hint-text').innerText = p.distHint;
+
+            if (answerMode === 'mc') {
+                document.getElementById('mc-container').classList.remove('hidden');
+                document.getElementById('input-container').classList.add('hidden');
+                generateMultipleChoiceOptions(p.answerStr);
+            } else {
+                document.getElementById('mc-container').classList.add('hidden');
+                document.getElementById('input-container').classList.remove('hidden');
+                document.getElementById('manual-answer-input').value = '';
+            }
+        }
+
+        function generateMultipleChoiceOptions(correctAnswer) {
+            const container = document.getElementById('mc-container');
+            container.innerHTML = '';
+
+            // Generate distractors
+            let choices = [correctAnswer];
+            let attempts = 0;
+
+            while (choices.length < 4 && attempts < 30) {
+                attempts++;
+                let distractor = createDistractor(correctAnswer);
+                if (!choices.includes(distractor)) {
+                    choices.push(distractor);
+                }
+            }
+
+            // Shuffle
+            choices.sort(() => Math.random() - 0.5);
+
+            choices.forEach((choice, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full py-3 px-3 rounded-xl bg-slate-900 border border-slate-700/80 hover:border-cyan-400 hover:bg-cyan-950/40 text-slate-200 font-orbitron font-bold text-sm sm:text-base transition text-center shadow-md flex items-center justify-center gap-2";
+                btn.innerHTML = `<span class="text-xs text-cyan-400 font-mono">[${String.fromCharCode(65 + idx)}]</span> ${choice}`;
+                btn.onclick = () => checkAnswer(choice);
+                container.appendChild(btn);
+            });
+        }
+
+        function createDistractor(correct) {
+            // Modify numbers/signs in correct answer string
+            return correct.replace(/(\+|-)?\s*(\d+)/g, (match, sign, num) => {
+                const n = parseInt(num);
+                const offset = (Math.random() < 0.5 ? 1 : -1) * (Math.floor(Math.random() * 3) + 1);
+                const newN = Math.abs(n + offset);
+                const newSign = sign ? (Math.random() < 0.3 ? (sign === '+' ? '-' : '+') : sign) : '';
+                return `${newSign} ${newN}`;
+            });
+        }
+
+        /* ------------------------------------------------------------------
+           5. GAME CONTROL & ANSWER VERIFICATION
+           ------------------------------------------------------------------ */
+        function checkAnswer(selectedAnswer) {
+            if (!gameState.active) return;
+
+            const cleanSelected = normalizeExpr(selectedAnswer);
+            const cleanCorrect = normalizeExpr(gameState.currentProblem.answerStr);
+
+            const feedback = document.getElementById('feedback-box');
+
+            if (cleanSelected === cleanCorrect) {
+                // Correct Answer!
+                gameState.questionsAnswered++;
+                const pts = DIFFICULTIES[currentDifficulty].scoreMultiplier;
+                gameState.score += pts;
+                updateScoreUI();
+
+                feedback.className = "h-10 rounded-xl flex items-center justify-center text-xs font-bold font-orbitron transition-all bg-emerald-950/80 border border-emerald-500 text-emerald-300 glow-green";
+                feedback.innerHTML = `<i class="fa-solid fa-circle-check mr-2"></i> TARGET LOCKED! PLASMA CANNON FIRED (+${pts} PTS)`;
+
+                // Shoot laser at boss & reduce Shield
+                deductBossEnergy();
+
+                // Check Victory
+                if (gameState.bossEnergy <= 0 || gameState.questionsAnswered >= gameState.targetQuestions) {
+                    setTimeout(endGameVictory, 800);
+                } else {
+                    setTimeout(generateBracketProblem, 1000);
+                }
+
+            } else {
+                // Wrong Answer!
+                sound.playError();
+                feedback.className = "h-10 rounded-xl flex items-center justify-center text-xs font-bold font-orbitron transition-all bg-red-950/80 border border-red-500 text-red-300 glow-red";
+                feedback.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-2"></i> EXPANSION ERROR! CORRECT: ${gameState.currentProblem.answerStr}`;
+                gameState.score = Math.max(0, gameState.score - 30);
+                updateScoreUI();
+            }
+        }
+
+        function submitManualAnswer() {
+            const input = document.getElementById('manual-answer-input').value;
+            if (!input.trim()) return;
+            checkAnswer(input);
+        }
+
+        function normalizeExpr(str) {
+            return str.replace(/\s+/g, '').toLowerCase();
+        }
+
+        /* ------------------------------------------------------------------
+           6. ENERGY BAR & BOSS SHIELD DEDUCTION SYSTEM
+           ------------------------------------------------------------------ */
+        function deductBossEnergy() {
+            // Deduct segment
+            const seg = gameState.bossSegmentVal;
+            gameState.bossEnergy = Math.max(0, gameState.bossEnergy - seg);
+
+            // Trigger Laser to Boss
+            triggerLaserBeam(bossMothership.x, bossMothership.y, true);
+
+            // Damage Text floating from boss
+            const damText = `-${seg.toFixed(1)}% SHIELD INTEGRITY!`;
+            addFloatingText(damText, bossMothership.x, bossMothership.y + 30, '#ef4444');
+
+            // Update Shield Bar UI
+            const bar = document.getElementById('boss-hp-bar');
+            const hpText = document.getElementById('boss-hp-text');
+            
+            bar.style.width = `${gameState.bossEnergy}%`;
+            hpText.innerText = `${gameState.bossEnergy.toFixed(1)}% INTEGRITY`;
+
+            if (gameState.bossEnergy <= 30) {
+                bar.className = "h-full rounded-md bg-gradient-to-r from-red-600 to-amber-500 transition-all duration-500 shadow-lg glow-red";
+            }
+        }
+
+        function renderShieldSegments() {
+            const container = document.getElementById('shield-segments');
+            container.innerHTML = '';
+            const totalSegs = gameState.targetQuestions;
+            for (let i = 1; i < totalSegs; i++) {
+                const line = document.createElement('div');
+                line.className = "h-full w-0.5 bg-slate-950/80";
+                container.appendChild(line);
+            }
+        }
+
+        /* ------------------------------------------------------------------
+           7. DIFFICULTY & GAME STATE MANAGEMENT
+           ------------------------------------------------------------------ */
+        function setDifficulty(diff) {
+            currentDifficulty = diff;
+            ['easy', 'medium', 'hard', 'insane'].forEach(d => {
+                const btn = document.getElementById(`btn-${d}`);
+                if (d === diff) {
+                    btn.className = "px-2.5 py-1 rounded-md transition text-cyan-400 bg-cyan-950/80 border border-cyan-500/50";
+                } else {
+                    btn.className = "px-2.5 py-1 rounded-md transition text-slate-400 hover:text-white";
+                }
+            });
+            resetGame();
+        }
+
+        function setAnswerMode(mode) {
+            answerMode = mode;
+            document.getElementById('mode-mc').className = mode === 'mc' ? "px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-600" : "px-2 py-0.5 rounded text-slate-400 hover:text-white";
+            document.getElementById('mode-input').className = mode === 'input' ? "px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-600" : "px-2 py-0.5 rounded text-slate-400 hover:text-white";
+            if (gameState.active) renderProblemUI();
+        }
+
+        function updateScoreUI() {
+            document.getElementById('score-display').innerText = String(gameState.score).padStart(4, '0');
+            document.getElementById('target-display').innerText = `${gameState.questionsAnswered} / ${gameState.targetQuestions}`;
+        }
+
+        function startGame() {
+            const config = DIFFICULTIES[currentDifficulty];
+            gameState.active = true;
+            gameState.score = 0;
+            gameState.questionsAnswered = 0;
+            gameState.targetQuestions = config.targetQuestions;
+            gameState.timer = config.timeLimit;
+            gameState.bossEnergy = 100;
+            gameState.bossSegmentVal = 100 / config.targetQuestions;
+
+            document.getElementById('game-overlay').classList.add('hidden');
+            renderShieldSegments();
+            deductBossEnergyUIUpdateOnly();
+            updateScoreUI();
+
+            // Clear entities
+            invaders = [];
+            lasers = [];
+            particles = [];
+
+            generateBracketProblem();
+
+            // Timer interval
+            if (gameState.timerInterval) clearInterval(gameState.timerInterval);
+            gameState.timerInterval = setInterval(() => {
+                gameState.timer--;
+                document.getElementById('timer-display').innerText = `${gameState.timer}s`;
+
+                if (gameState.timer <= 0) {
+                    endGameOver();
+                }
+            }, 1000);
+        }
+
+        function deductBossEnergyUIUpdateOnly() {
+            const bar = document.getElementById('boss-hp-bar');
+            const hpText = document.getElementById('boss-hp-text');
+            bar.style.width = `100%`;
+            bar.className = "h-full rounded-md bg-gradient-to-r from-cyan-500 via-teal-400 to-emerald-400 transition-all duration-500 shadow-lg glow-cyan";
+            hpText.innerText = `100.0% INTEGRITY`;
+        }
+
+        function resetGame() {
+            gameState.active = false;
+            if (gameState.timerInterval) clearInterval(gameState.timerInterval);
+            document.getElementById('game-overlay').classList.remove('hidden');
+            document.getElementById('overlay-title').innerText = "DEFEND THE NEXUS BASE";
+            document.getElementById('overlay-desc').innerText = "Expand brackets accurately to power up the Orbital Plasma Cannon. Neutralize advancing invader waves and destroy the Alien Mothership shield!";
+        }
+
+        function endGameVictory() {
+            gameState.active = false;
+            clearInterval(gameState.timerInterval);
+            sound.playVictory();
+
+            // Epic Explosion at boss
+            createExplosion(bossMothership.x, bossMothership.y, '#ef4444', 60);
+
+            const overlay = document.getElementById('game-overlay');
+            overlay.classList.remove('hidden');
+            document.getElementById('overlay-title').innerText = "VICTORY! MOTHERSHIP DESTROYED!";
+            document.getElementById('overlay-desc').innerHTML = `
+                <div class="text-emerald-400 font-bold text-lg mb-2">SECTOR DEFENDED SUCCESSFULLY!</div>
+                <div class="text-slate-300 text-xs space-y-1 font-mono">
+                    <div>Final Score: <span class="text-cyan-300 font-bold">${gameState.score} PTS</span></div>
+                    <div>Questions Solved: <span class="text-emerald-300 font-bold">${gameState.questionsAnswered}/${gameState.targetQuestions}</span></div>
+                    <div>Time Left: <span class="text-amber-300 font-bold">${gameState.timer}s</span></div>
+                </div>
+            `;
+        }
+
+        function endGameOver() {
+            gameState.active = false;
+            clearInterval(gameState.timerInterval);
+            sound.playError();
+
+            const overlay = document.getElementById('game-overlay');
+            overlay.classList.remove('hidden');
+            document.getElementById('overlay-title').innerText = "DEFENSE OVERRUN!";
+            document.getElementById('overlay-desc').innerHTML = `
+                <div class="text-red-400 font-bold text-lg mb-2">TIME EXPIRED / SHIELD HELD</div>
+                <div class="text-slate-300 text-xs space-y-1 font-mono">
+                    <div>Questions Completed: <span class="text-cyan-300 font-bold">${gameState.questionsAnswered}/${gameState.targetQuestions}</span></div>
+                    <div>Final Score: <span class="text-amber-300 font-bold">${gameState.score} PTS</span></div>
+                </div>
+            `;
+        }
+
+        function switchPage(pageNum) {
+            if (pageNum === 2) return;
+            // Simulated multi-page router alert or transition
+            alert(`Navigating to Page ${pageNum}. (In full app suite, Page ${pageNum} loads corresponding module).`);
+        }
+
+        /* ------------------------------------------------------------------
+           8. INIT ON LOAD
+           ------------------------------------------------------------------ */
+        window.onload = function () {
+            resizeCanvas();
+            updateAndRender();
+            generateBracketProblem();
+        };
+    </script>
+</body>
+</html>
